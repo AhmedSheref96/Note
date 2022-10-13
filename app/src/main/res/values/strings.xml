@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Note</string>
+    <string name="app_name">Note App</string>
+    <string name="last_edit_time">last edit Time : </string>
+    <string name="add_new">new</string>
 </resources>
