@@ -10,7 +10,6 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 sealed class HomeUseCases {
-
     object GetNotes : HomeUseCases() {
         operator fun invoke(
             repository: NotesRepository? = null
@@ -23,10 +22,17 @@ sealed class HomeUseCases {
         suspend operator fun invoke(
             coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
             repository: NotesRepository? = null,
-            note: NoteEntity
+            note: NoteEntity,
+            onError : (String)->Unit,
+            onSuccess : (NoteEntity)->Unit
         ) {
             withContext(coroutineDispatcher) {
-                repository?.addNote(note)
+                try {
+                    repository?.addNote(note)
+                    onSuccess(note)
+                }catch (e:Exception){
+                    onError(e.message.toString())
+                }
             }
         }
     }
