@@ -1,27 +1,30 @@
 package com.el3asas.note.domain.home
 
+import androidx.lifecycle.LiveData
 import com.el3asas.note.data.models.NoteEntity
 import com.el3asas.note.repositories.home.NotesRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import timber.log.Timber
 
-sealed class HomeUseCases @Inject constructor(
-    val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
-    val repository: NotesRepository? = null
-) {
+sealed class HomeUseCases {
 
     object GetNotes : HomeUseCases() {
-        suspend operator fun invoke() : List<NoteEntity>? {
-            return withContext(coroutineDispatcher) {
-                repository?.getHomeNotes()
-            }
+        operator fun invoke(
+            repository: NotesRepository? = null
+        ): LiveData<List<NoteEntity>?>? {
+            return repository?.getHomeNotes()
         }
     }
 
     object AddNote : HomeUseCases() {
-        suspend operator fun invoke(note: NoteEntity) {
+        suspend operator fun invoke(
+            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
+            repository: NotesRepository? = null,
+            note: NoteEntity
+        ) {
             withContext(coroutineDispatcher) {
                 repository?.addNote(note)
             }
@@ -29,7 +32,11 @@ sealed class HomeUseCases @Inject constructor(
     }
 
     object UpdateNote : HomeUseCases() {
-        suspend operator fun invoke(note: NoteEntity) {
+        suspend operator fun invoke(
+            coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
+            repository: NotesRepository? = null,
+            note: NoteEntity
+        ) {
             withContext(coroutineDispatcher) {
                 repository?.update(note)
             }

@@ -3,13 +3,14 @@ package com.el3asas.note.ui.home
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,54 +33,52 @@ class HomeAdapter(override val bindingInflater: (LayoutInflater) -> ViewBinding 
     override fun getItemCount(): Int = dataList.size
 
     fun setData(list:List<NoteItemStateUi>){
-        dataList=list
+        dataList = list
     }
 
     override fun onBindViewHolder(holder: MainViewHolder<RecyclerItemNoteBinding>, position: Int) {
         val noteItemStateUi = dataList[position]
-        holder.binding.item.apply {
-            setContent {
-                setUpRecyclerViewItem(this, noteItemStateUi = noteItemStateUi)
+        holder.binding.apply {
+            item.apply {
+                setContent {
+                    SetUpRecyclerViewItem(noteItemStateUi = noteItemStateUi)
+                }
             }
         }
     }
 
-    private fun setUpRecyclerViewItem(composeView: ComposeView, noteItemStateUi: NoteItemStateUi) {
+    @Composable
+    private fun SetUpRecyclerViewItem(noteItemStateUi: NoteItemStateUi) {
         val imageBitmap = stringToBitMap(noteItemStateUi.imageString)?.asImageBitmap()
-        composeView.setContent {
-            Surface {
-                ConstraintLayout(Modifier.padding(16.dp)) {
+        Surface(Modifier.background(color = Color.LightGray)) {
+            ConstraintLayout(Modifier.padding(16.dp)) {
+                val (title, description, img) = createRefs()
+                Text(text = noteItemStateUi.title, modifier = Modifier.constrainAs(title) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                }, color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
-                    val (title, description, img) = createRefs()
-                    Text(text = noteItemStateUi.title, modifier = Modifier.constrainAs(title) {
-                        top.linkTo(parent.top)
+                Text(
+                    text = noteItemStateUi.description,
+                    modifier = Modifier.constrainAs(description) {
+                        top.linkTo(title.bottom)
                         start.linkTo(parent.start)
-                    }, color = Color.Black, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    },
+                    color = Color.Red,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
 
-                    Text(
-                        text = noteItemStateUi.description,
-                        modifier = Modifier.constrainAs(description) {
-                            top.linkTo(title.bottom)
+                imageBitmap?.let {
+                    Image(bitmap = it,
+                        contentDescription = "",
+                        modifier = Modifier.constrainAs(img) {
+                            top.linkTo(description.bottom)
+                            bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start)
-                        },
-                        color = Color.Black,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    imageBitmap?.let {
-                        Image(
-                            bitmap = it,
-                            contentDescription = "",
-                            modifier = Modifier.constrainAs(img) {
-                                top.linkTo(description.bottom)
-                                bottom.linkTo(parent.bottom)
-                                start.linkTo(parent.start)
-                            })
-                    }
-
+                        })
                 }
-            }
+                }
         }
     }
 

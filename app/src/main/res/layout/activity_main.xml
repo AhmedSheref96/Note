@@ -73,6 +73,7 @@
             android:layout_height="wrap_content"
             app:layout_anchor="@id/app_bar"
             app:layout_anchorGravity="bottom|end"
+            android:onClick="@{viewModel::addNote}"
             android:layout_marginHorizontal="@dimen/_16sdp"
             app:icon="@drawable/ic_round_add_24"
             app:iconTint="@color/white"
