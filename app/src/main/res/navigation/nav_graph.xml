@@ -9,6 +9,18 @@
         android:id="@+id/homeFragment"
         android:name="com.el3asas.note.ui.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_noteDetailsFragment"
+            app:destination="@id/noteDetailsFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/noteDetailsFragment"
+        android:name="com.el3asas.note.ui.noteDetails.NoteDetailsFragment"
+        android:label="NoteDetailsFragment">
+        <argument
+            android:name="noteId"
+            app:argType="long" />
+    </dialog>
 
 </navigation>

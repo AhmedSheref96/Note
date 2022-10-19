@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import com.el3asas.note.databinding.FragmentHomeBinding
 import com.el3asas.utils.binding.FragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment(override val bindingInflater: (LayoutInflater) -> ViewBinding=FragmentHomeBinding::inflate)
@@ -19,8 +21,13 @@ class HomeFragment(override val bindingInflater: (LayoutInflater) -> ViewBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            viewModel=this@HomeFragment.viewModel
-            lifecycleOwner=this@HomeFragment
+            viewModel = this@HomeFragment.viewModel
+            lifecycleOwner = this@HomeFragment
+        }
+        binding.refreshLayout.setOnRefreshListener {
+            lifecycleScope.launch {
+                viewModel.homeIntents.send(HomeIntents.Refresh(binding.refreshLayout))
+            }
         }
     }
 

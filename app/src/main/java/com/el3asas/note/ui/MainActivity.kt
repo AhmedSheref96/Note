@@ -10,7 +10,6 @@ import com.el3asas.note.R
 import com.el3asas.note.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -32,19 +31,18 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.mainStateView.collect { state ->
                 when (state) {
-                    is MainStateViews.Loading -> {
+                    is MainViewsState.Loading -> {
                         viewModel.isLoading.value = true
                     }
-                    is MainStateViews.NewNoteAdded -> {
-                        Timber.d("------------------- new note added")
+                    is MainViewsState.NewNoteAdded -> {
                         Toast.makeText(this@MainActivity, "new note added", Toast.LENGTH_SHORT)
                             .show()
                     }
-                    is MainStateViews.Error -> {
+                    is MainViewsState.Error -> {
                         Toast.makeText(this@MainActivity, "error occurred", Toast.LENGTH_SHORT)
                             .show()
                     }
-                    is MainStateViews.Idle -> {
+                    is MainViewsState.Idle -> {
                         viewModel.isLoading.value = false
                     }
                 }
