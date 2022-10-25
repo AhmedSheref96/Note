@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
             lifecycleOwner = this@MainActivity
             executePendingBindings()
         }
-
     }
 
     private fun performStates() {

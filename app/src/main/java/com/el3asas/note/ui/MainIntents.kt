@@ -1,5 +1,7 @@
 package com.el3asas.note.ui
 
+import android.view.View
+
 sealed class MainIntents {
-    object AddNote : MainIntents()
+    data class AddNote(val V: View) : MainIntents()
 }

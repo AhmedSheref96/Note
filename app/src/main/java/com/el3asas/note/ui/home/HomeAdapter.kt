@@ -107,7 +107,7 @@ class HomeAdapter(
                     }
                 ),
             shape = RoundedCornerShape(8.dp),
-            color = Color(0x57FF8484)
+            color = Color(noteItemStateUi.colorHex.toULong())
         ) {
             ConstraintLayout {
                 val (title, description, img, deleteBtn) = createRefs()
@@ -135,6 +135,7 @@ class HomeAdapter(
                             top.linkTo(title.bottom)
                             start.linkTo(parent.start)
                         },
+                    maxLines = 3,
                     color = Color(0x54000000),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
@@ -144,6 +145,7 @@ class HomeAdapter(
                     painter = painterResource(id = R.drawable.ic_delete),
                     contentDescription = "delete",
                     modifier = Modifier
+                        .padding(8.dp)
                         .constrainAs(deleteBtn) {
                             top.linkTo(parent.top)
                             end.linkTo(parent.end)

@@ -4,15 +4,28 @@ import androidx.lifecycle.LiveData
 import com.el3asas.note.data.models.NoteEntity
 import com.el3asas.note.repositories.home.NotesRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 sealed class HomeUseCases {
     object GetNotes : HomeUseCases() {
         operator fun invoke(
             repository: NotesRepository? = null
-        ): LiveData<List<NoteEntity>?>? {
+        ): Flow<List<NoteEntity>?>? {
             return repository?.getHomeNotes()
+        }
+    }
+
+    data class GetNote(val noteId: Long) : HomeUseCases() {
+        suspend operator fun invoke(
+            coroutineDispatcher: CoroutineDispatcher,
+            repository: NotesRepository? = null
+        ): NoteEntity? {
+            return withContext(coroutineDispatcher){
+                repository?.getNoteById(noteId)
+            }
         }
     }
 
@@ -27,7 +40,7 @@ sealed class HomeUseCases {
         ) {
             withContext(coroutineDispatcher) {
                 try {
-                    onSuccess(repository?.addNote(note.copy(title = note.title + counter++))!!)
+                    onSuccess(repository?.addNote(note.copy(title = note.title))!!)
                 } catch (e: Exception) {
                     onError(e.message.toString())
                 }

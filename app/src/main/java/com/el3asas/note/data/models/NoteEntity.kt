@@ -10,4 +10,5 @@ data class NoteEntity(
     val title:String,
     val description:String,
     val images :List<String>?,
+    val colorHex : Long,
     val date:String)

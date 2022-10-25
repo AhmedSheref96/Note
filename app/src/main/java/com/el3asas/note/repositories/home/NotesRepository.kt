@@ -1,12 +1,15 @@
 package com.el3asas.note.repositories.home
 
-import androidx.lifecycle.LiveData
 import com.el3asas.note.data.models.NoteEntity
 import com.el3asas.note.data.source.local.daos.NoteDao
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class NotesRepository @Inject constructor(private val noteDao: NoteDao) {
-    fun getHomeNotes(): LiveData<List<NoteEntity>?> = noteDao.getNotes()
+    fun getHomeNotes(): Flow<List<NoteEntity>?> = noteDao.getNotes()
+
+
+    suspend fun getNoteById(noteId: Long): NoteEntity? = noteDao.getNoteById(noteId)
 
     suspend fun addNote(note: NoteEntity): NoteEntity {
         return note.copy(id = noteDao.insertNote(note))

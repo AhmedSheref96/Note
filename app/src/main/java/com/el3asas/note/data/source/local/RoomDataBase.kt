@@ -7,7 +7,7 @@ import com.el3asas.note.data.models.NoteEntity
 import com.el3asas.note.data.source.local.converters.NoteEntityConverter
 import com.el3asas.note.data.source.local.daos.NoteDao
 
-@Database(entities = [NoteEntity::class], exportSchema = true, version = 6)
+@Database(entities = [NoteEntity::class], exportSchema = true, version = 9)
 @TypeConverters(NoteEntityConverter::class)
 abstract class RoomDataBase : RoomDatabase() {
     abstract fun noteDao(): NoteDao

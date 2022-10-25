@@ -30,5 +30,4 @@ class HomeFragment(override val bindingInflater: (LayoutInflater) -> ViewBinding
             }
         }
     }
-
 }

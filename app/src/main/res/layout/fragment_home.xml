@@ -28,7 +28,8 @@
                 android:layout_height="match_parent"
                 android:adapter="@{viewModel.homeAdapter}"
                 android:clipToPadding="false"
-                android:paddingVertical="@dimen/_25sdp"
+                android:paddingTop="@dimen/_25sdp"
+                android:paddingBottom="@dimen/_50sdp"
                 app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
                 app:spanCount="2"
                 tools:listitem="@layout/recycler_item_note" />

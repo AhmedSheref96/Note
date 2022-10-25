@@ -1,8 +1,8 @@
 package com.el3asas.note.data.source.local.daos
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.el3asas.note.data.models.NoteEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
@@ -20,6 +20,9 @@ interface NoteDao {
     suspend fun updateNote(noteEntity: NoteEntity)
 
     @Query("select * from notes")
-    fun getNotes(): LiveData<List<NoteEntity>?>
+    fun getNotes(): Flow<List<NoteEntity>?>
+
+    @Query("select * from notes where id=:id")
+    suspend fun getNoteById(id: Long): NoteEntity?
 
 }

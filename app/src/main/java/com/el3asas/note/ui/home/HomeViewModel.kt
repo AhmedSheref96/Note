@@ -1,7 +1,6 @@
 package com.el3asas.note.ui.home
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import com.el3asas.note.domain.home.HomeUseCases
@@ -27,13 +26,14 @@ class HomeViewModel @Inject constructor(private val repository: NotesRepository)
 
     private fun getData() {
         viewModelScope.launch {
-            HomeUseCases.GetNotes.invoke(repository)?.asFlow()?.collect { noteEntities ->
+            HomeUseCases.GetNotes.invoke(repository)?.collect { noteEntities ->
                 noteEntities?.map {
                     NoteItemStateUi(
                         it.id ?: 0,
                         it.title,
                         it.description,
                         it.images?.get(0),
+                        colorHex = it.colorHex,
                         date = it.date
                     )
                 }?.let {
@@ -42,7 +42,6 @@ class HomeViewModel @Inject constructor(private val repository: NotesRepository)
             }
         }
     }
-
 
     private fun handleNoteState() {
         viewModelScope.launch {
@@ -59,10 +58,9 @@ class HomeViewModel @Inject constructor(private val repository: NotesRepository)
 
                     is NoteItemIntents.OpenNote -> {
                         it.v.findNavController().navigate(
-                            HomeFragmentDirections.actionHomeFragmentToNoteDetailsFragment(noteId = it.noteId)
+                            HomeFragmentDirections.actionHomeFragmentToAddUpdateFragment(noteId = it.noteId)
                         )
                     }
-                    else -> {}
                 }
             }
         }

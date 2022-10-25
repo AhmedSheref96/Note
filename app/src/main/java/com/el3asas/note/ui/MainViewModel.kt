@@ -4,11 +4,13 @@ import android.view.View
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.el3asas.note.data.models.NoteEntity
-import com.el3asas.note.domain.home.HomeUseCases
+import androidx.navigation.Navigation.findNavController
+import com.el3asas.note.NavGraphDirections
+import com.el3asas.note.R
 import com.el3asas.note.repositories.home.NotesRepository
+import com.el3asas.utils.utils.getActivity
+import com.el3asas.utils.utils.navigate
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,8 +27,6 @@ class MainViewModel @Inject constructor(private val repository: NotesRepository)
     val isLoading = mutableStateOf(false)
     private val mainIntents = MutableSharedFlow<MainIntents>()
 
-    var b = 1
-
     init {
         intentsProducer()
     }
@@ -36,20 +36,12 @@ class MainViewModel @Inject constructor(private val repository: NotesRepository)
             mainIntents.asSharedFlow().collect { intent ->
                 when (intent) {
                     is MainIntents.AddNote -> {
-                        HomeUseCases.AddNote(Dispatchers.IO, repository, NoteEntity(
-                            title = "title",
-                            images = listOf("https://cnn-arabic-images.cnn.io/cloudinary/image/upload/w_1600,c_scale,q_auto/cnnarabic/2022/05/25/images/213287.webp"),
-                            date = "10/16/2022",
-                            description = "description"
-                        ), onSuccess = {
-                            viewModelScope.launch {
-                                _mainStateView.emit(MainViewsState.NewNoteAdded(it))
-                            }
-                        }, onError = {
-                            viewModelScope.launch {
-                                _mainStateView.emit(MainViewsState.Error(it))
-                            }
-                        })
+                        navigate(
+                            findNavController(
+                                getActivity(intent.V.context)!!,
+                                R.id.nav_host_fragment
+                            ), NavGraphDirections.openAddDialog()
+                        )
                     }
                 }
             }
@@ -58,7 +50,7 @@ class MainViewModel @Inject constructor(private val repository: NotesRepository)
 
     fun addNote(v: View) {
         viewModelScope.launch {
-            mainIntents.emit(MainIntents.AddNote)
+            mainIntents.emit(MainIntents.AddNote(v))
         }
     }
 
