@@ -44,7 +44,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -75,10 +77,12 @@ class AddUpdateFragment(override val bindingInflater: (LayoutInflater) -> ViewBi
         }
     }
 
+    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun AddScene() {
         val viewState by remember { viewModel.addUpdateViewStates }
-        val scaffoldState = rememberScaffoldState()
+        var imageUriForBottomSheet by remember { mutableStateOf(Uri.parse("")) }
+        val scaffoldState = rememberBottomSheetScaffoldState()
         var noteColor by remember { mutableStateOf(Color(0xFFB2EC9A)) }
         var imagesList by remember { viewModel.images }
         var titleValue by remember { mutableStateOf("") }
@@ -110,9 +114,15 @@ class AddUpdateFragment(override val bindingInflater: (LayoutInflater) -> ViewBi
             addOrUpdateIconId = R.drawable.ic_baseline_edit_24
         }
 
-        Scaffold(
+        BottomSheetScaffold(
+            modifier = Modifier.fillMaxSize(),
             scaffoldState = scaffoldState,
-            backgroundColor = noteColor
+            backgroundColor = noteColor,
+            sheetPeekHeight = 0.dp,
+            sheetGesturesEnabled = true,
+            sheetContent = {
+                ShowImage(imageUri = imageUriForBottomSheet)
+            }
         ) {
             ConstraintLayout(
                 modifier = Modifier
@@ -133,7 +143,8 @@ class AddUpdateFragment(override val bindingInflater: (LayoutInflater) -> ViewBi
                         modifier = Modifier
                             .background(
                                 Color(0xFF2196F3),
-                                RoundedCornerShape(bottomEndPercent = 50, bottomStartPercent = 50))
+                                RoundedCornerShape(bottomEndPercent = 50, bottomStartPercent = 50)
+                            )
                             .padding(8.dp)
                     ) {
                         IconButton(modifier = Modifier
@@ -240,6 +251,7 @@ class AddUpdateFragment(override val bindingInflater: (LayoutInflater) -> ViewBi
                         Text(text = "Enter Description")
                     })
 
+                val coroutineScope = rememberCoroutineScope()
                 LazyRow(horizontalArrangement = Arrangement.Start,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -249,11 +261,18 @@ class AddUpdateFragment(override val bindingInflater: (LayoutInflater) -> ViewBi
                             end.linkTo(parent.end)
                         }
                 ) {
+
                     items(imagesList) { imgUri ->
                         Image(
                             modifier = Modifier
                                 .clip(shape = RoundedCornerShape(CornerSize(23.dp)))
                                 .size(100.dp, 100.dp)
+                                .clickable {
+                                    imageUriForBottomSheet = imgUri
+                                    coroutineScope.launch {
+                                        scaffoldState.bottomSheetState.expand()
+                                    }
+                                }
                                 .padding(5.dp),
                             contentScale = ContentScale.Crop,
                             painter = rememberAsyncImagePainter(model = imgUri),
@@ -351,6 +370,16 @@ class AddUpdateFragment(override val bindingInflater: (LayoutInflater) -> ViewBi
                     viewModel.images.value = uriList
                 }
             }
+    }
+
+    @Composable
+    fun ShowImage(imageUri: Uri) {
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Inside,
+            painter = rememberAsyncImagePainter(model = imageUri),
+            contentDescription = imageUri.toString()
+        )
     }
 
 }

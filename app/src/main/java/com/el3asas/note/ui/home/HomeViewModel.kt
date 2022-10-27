@@ -32,7 +32,7 @@ class HomeViewModel @Inject constructor(private val repository: NotesRepository)
                         it.id ?: 0,
                         it.title,
                         it.description,
-                        it.images?.get(0),
+                        imageString = it.images?.get(0),
                         colorHex = it.colorHex,
                         date = it.date
                     )

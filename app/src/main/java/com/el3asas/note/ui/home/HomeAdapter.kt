@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
@@ -164,6 +165,8 @@ class HomeAdapter(
                             .crossfade(true).build(),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(60.dp, 120.dp)
                             .constrainAs(img) {
                                 top.linkTo(description.bottom)
                                 start.linkTo(parent.start)
@@ -182,5 +185,4 @@ class HomeAdapter(
             }
         }
     }
-
 }
